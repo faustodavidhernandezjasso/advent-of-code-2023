@@ -74,8 +74,61 @@ fun numbersInTheEngineSchematic(lines: List<String>): Int {
     return sum
 }
 
+fun getNumber(lines: List<String>, 
+              index: Int): Set<Int> {
+    val s: Int = lines.lastIndex
+    val myRange: IntRange = 0..s
+    var numbers: MutableSet<Int> = mutableSetOf<Int>()
+    val regex: Regex = Regex("\\b\\d+\\b")
+    for (i in myRange) {
+        val matches = regex.findAll(lines.get(i))
+        for (match in matches) {
+            if (match.range.contains(index + 1)) {
+                numbers.add(match.value.toInt())
+            }
+            if (match.range.contains(index - 1)) {
+                numbers.add(match.value.toInt())
+            }
+            if (i != 0) {
+                if (match.range.contains(index)) {
+                    numbers.add(match.value.toInt())
+                }
+            }
+        }
+    }
+    return numbers
+}
+
+fun findTheGearRatio(lines: List<String>): Int {
+    val regex: Regex = Regex("\\*")
+    val last: Int = lines.lastIndex
+    var sum: Int = 0
+    lines.forEachIndexed { i, value ->
+        val matchesOfStar = regex.findAll(value)
+        for (star in matchesOfStar) {
+            var list: MutableList<String> = mutableListOf<String>()
+            list.add(value)
+            if (i > 0 && i < last) {
+                list.add(lines.get(i - 1))
+                list.add(lines.get(i + 1))
+            } else if (i == 0) {
+                list.add(lines.get(i + 1))
+            } else {
+                list.add(lines.get(i - 1))
+            }
+            val set: Set<Int> = getNumber(list, star.range.start)
+            if (set.size == 2) {
+                sum += set.first() * set.last()
+            } else {
+                continue
+            }
+        }
+    }
+    return sum
+}
+
 
 fun main() {
-    val sum: Int = numbersInTheEngineSchematic(readFile("input.txt"))
+    val sum: Int = findTheGearRatio(readFile("input.txt"))
     println(sum)
 }

@@ -19,12 +19,10 @@ fun computeWorthOfScratchcards(cards: List<String>): Int {
     for (card in cards) {
         val array: Array<String> = card.replace(regex, "").split("|").toTypedArray()
         val matchesOfWinningNumbers = r.findAll(array[0])
-        val matchesOfHavingNumbers = r.findAll(array[1])
+        val matchesOfActualNumbers = r.findAll(array[1])
         val winningNumbers: Set<Int> = matchesOfWinningNumbers.toList().map { it.value.toInt() }.toSet()
-        val havingNumbers: Set<Int> = matchesOfHavingNumbers.toList().map { it.value.toInt() }.toSet()
-        println(winningNumbers)
-        println(havingNumbers)
-        val n: Int = winningNumbers.intersect(havingNumbers).size
+        val actualNumbers: Set<Int> = matchesOfActualNumbers.toList().map { it.value.toInt() }.toSet()
+        val n: Int = winningNumbers.intersect(actualNumbers).size
         if (n > 0) {
             total += (2.0).pow(n - 1).toInt()
         }

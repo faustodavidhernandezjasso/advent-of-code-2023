@@ -30,9 +30,32 @@ fun computeWorthOfScratchcards(cards: List<String>): Int {
     return total
 }
 
+fun computeNumberOfScratchCards(cards: List<String>): Int {
+    val regex: Regex = Regex("Card\\s+\\d+:")
+    val r: Regex = Regex("\\d+")
+    val size: Int = cards.size
+    val numberOfCards: Array<Int> = Array<Int>(size) { 1 }
+    cards.forEachIndexed { index, value ->
+        val array: Array<String> = value.replace(regex, "").split("|").toTypedArray()
+        val matchesOfWinningNumbers = r.findAll(array[0])
+        val matchesOfActualNumbers = r.findAll(array[1])
+        val winningNumbers: Set<Int> = matchesOfWinningNumbers.toList().map { it.value.toInt() }.toSet()
+        val actualNumbers: Set<Int> = matchesOfActualNumbers.toList().map { it.value.toInt() }.toSet()
+        val n: Int = winningNumbers.intersect(actualNumbers).size
+        for (i in (index + 1)..(index + n)) {
+            if (i < size)  {
+                numberOfCards[i] += numberOfCards[index]
+            }
+        }
+    }
+    return numberOfCards.sum()
+}
+
 
 fun main() {
     val input: List<String> = readFile("input.txt")
     val points: Int = computeWorthOfScratchcards(input)
-    println("Total points are: $points")
+    println("Total points: $points")
+    val numberOfCards: Int = computeNumberOfScratchCards(input)
+    println("Total number of cards: $numberOfCards")
 }
